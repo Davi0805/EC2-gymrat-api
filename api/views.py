@@ -12,6 +12,22 @@ class ExercparametrosListView(generics.ListAPIView):
     queryset = Exercparametros.objects.all()
     serializer_class = ExercparametrosSerializer
     http_method_names = ['get']
+    ficha_separator = ","
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned articles to given regions,
+        by filtering against a `regions` query parameter in the URL.
+        """
+        fichas = self.request.query_params.get("ficha", None)
+        if fichas:
+            qs = Exercparametros.objects.filter()
+            for ficha in fichas.split(self.ficha_separator):
+                qs = qs.filter(ficha__id=ficha)
+
+            return qs
+
+        return super().get_queryset()
 
 class ExercparametrosUpdateView(generics.RetrieveUpdateAPIView):
     queryset = Exercparametros.objects.all()
